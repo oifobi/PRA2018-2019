@@ -1,13 +1,16 @@
 package pl.edu.amu.pracprog;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import model.Employee;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class JacksonSerialization {
 
@@ -42,8 +45,23 @@ public class JacksonSerialization {
     }
 
     public static void serializeListDemo(ObjectMapper mapper, String fileSuffix) throws IOException {
+        //Set mapper to pretty-print
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        //Create objects to serialize
+        ModelObjectsCreator objectsCreator = new ModelObjectsCreator();
+        List<Employee> employee = objectsCreator.getEmployees();
+
+        //Serialize to file and string
+        mapper.writeValue(new File("resultList." + fileSuffix), employee);
+
+        List<Employee> deserializedEmployee = mapper.readValue(
+                new File("resultList." + fileSuffix), new TypeReference<List<Employee>>(){});
+
+        deserializedEmployee.get(0);
 
     }
+
 
     public static void deserializeDemo(ObjectMapper mapper, String fileSuffix) throws IOException {
         //Deserialized employee object from employees.* file in resources
@@ -64,9 +82,14 @@ public class JacksonSerialization {
 
     public static void main(String[] args) throws IOException {
 
+
+
         ObjectMapper jsonMapper = new ObjectMapper();
+        jsonMapper.registerModule(new JodaModule());
+        serializeListDemo(jsonMapper,"json");
+
         serializeDemo(jsonMapper, "json");
-        deserializeDemo(jsonMapper, "json");
+        //deserializeDemo(jsonMapper, "json");
 
     }
 }

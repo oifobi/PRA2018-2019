@@ -1,7 +1,12 @@
 package model;
 
+import com.fasterxml.jackson.annotation.*;
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
+@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class,
+        property="refId", scope=Employee.class)
 
 public class Employee {
 
@@ -11,8 +16,17 @@ public class Employee {
 
     private String lastName;
 
+    private DateTime birth;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.")
+
+    public DateTime getBirth() {
+        return birth;
+    }
+
+    @JsonProperty("money")
     private int salary;
 
+    @JsonIgnore
     private int pesel;
 
     Address address;
